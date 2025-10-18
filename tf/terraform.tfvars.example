@@ -1,0 +1,119 @@
+# Archivo de ejemplo de variables para Terraform
+# IMPORTANTE: Este archivo contiene valores de ejemplo y NO debe contener datos reales
+# 
+# INSTRUCCIONES DE USO:
+# 1. Copia este archivo como terraform.tfvars
+# 2. Reemplaza todos los valores de ejemplo con tus datos reales
+# 3. NUNCA commitees terraform.tfvars al control de versiones
+# 4. Agrega terraform.tfvars al .gitignore
+
+# =============================================================================
+# CONFIGURACIÓN BÁSICA DEL PROYECTO
+# =============================================================================
+
+# ID del proyecto de Google Cloud Platform
+# Reemplaza con tu project ID real
+project_id = "tu-proyecto-gcp"
+
+# Región de GCP donde se desplegarán los recursos
+# Opciones comunes: europe-west1, us-central1, asia-southeast1
+region = "europe-west1"
+
+# Zona específica dentro de la región
+# Debe ser consistente con la región seleccionada
+zone = "europe-west1-b"
+
+# =============================================================================
+# CONFIGURACIÓN DE SERVIDORES WEB
+# =============================================================================
+
+# Configuración de servidores individuales usando el patrón for_each
+# Cada servidor se define con su zona específica
+servers = {
+  "web-1" = {
+    zone = "europe-west1-b"
+  }
+  "web-2" = {
+    zone = "europe-west1-b"
+  }
+  "web-3" = {
+    zone = "europe-west1-d"
+  }
+  "web-4" = {
+    zone = "europe-west1-d"
+  }
+  "web-5" = {
+    zone = "europe-west1-d"
+  }
+}
+
+# =============================================================================
+# CONFIGURACIÓN DE HARDWARE
+# =============================================================================
+
+# Tipo de máquina para todos los servidores
+# Opciones: e2-micro, e2-small, e2-medium, e2-standard-2, etc.
+default_machine_type = "e2-medium"
+
+# Tamaño del disco en GB
+# Mínimo recomendado: 20GB
+default_disk_size = 20
+
+# =============================================================================
+# CONFIGURACIÓN DE SEGURIDAD SSH
+# =============================================================================
+
+# Clave pública SSH para acceso a las instancias
+# FORMATO REQUERIDO: "usuario:ssh-rsa <clave_publica_completa>"
+# 
+# IMPORTANTE: 
+# - Reemplaza "tu-usuario" con tu nombre de usuario real
+# - Reemplaza la clave con tu clave pública SSH real
+# - La clave debe estar en formato OpenSSH
+# - NUNCA uses claves privadas en este archivo
+ssh_public_key = "tu-usuario:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC...tu-clave-publica-real"
+
+# =============================================================================
+# CONFIGURACIÓN DE ETIQUETADO
+# =============================================================================
+
+# Tags adicionales para organización y gestión
+# Estos tags se aplicarán a todos los servidores
+additional_tags = [
+  "managed-by-terraform",
+  "auto-scaling-group", 
+  "web-tier",
+  "environment-production"
+]
+
+# =============================================================================
+# NOTAS DE SEGURIDAD
+# =============================================================================
+
+# DATOS SENSIBLES QUE NUNCA DEBEN INCLUIRSE:
+# - Claves privadas SSH
+# - Tokens de API
+# - Contraseñas
+# - Certificados privados
+# - Información de bases de datos
+# - Configuraciones de producción
+
+# MEJORES PRÁCTICAS:
+# 1. Usa variables de entorno para datos sensibles
+# 2. Implementa un sistema de gestión de secretos
+# 3. Usa diferentes archivos .tfvars para diferentes entornos
+# 4. Revisa regularmente los permisos de acceso
+# 5. Implementa rotación de claves
+
+# =============================================================================
+# CONFIGURACIÓN POR ENTORNOS
+# =============================================================================
+
+# Para diferentes entornos, crea archivos separados:
+# - terraform.tfvars.dev     (desarrollo)
+# - terraform.tfvars.staging (staging)
+# - terraform.tfvars.prod    (producción)
+
+# Usa el flag -var-file para especificar el entorno:
+# terraform plan -var-file="terraform.tfvars.prod"
+# terraform apply -var-file="terraform.tfvars.prod"

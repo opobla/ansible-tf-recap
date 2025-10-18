@@ -1,0 +1,68 @@
+# Archivos de estado de Terraform
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Archivos de variables con datos sensibles
+terraform.tfvars
+*.tfvars
+!terraform.tfvars.example
+
+# Archivos de plan de Terraform
+*.tfplan
+*.tfplan.*
+
+# Archivos de lock de Terraform
+.terraform.lock.hcl
+
+# Directorio de plugins de Terraform
+.terraform/
+.terraform.lock.hcl
+
+# Archivos de logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Archivos de backup
+*.bak
+*.backup
+
+# Archivos de configuración local
+.terraformrc
+terraform.rc
+
+# Archivos de credenciales
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Archivos de configuración de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de Ansible
+ansible.cfg.local
+inventory.local
+*.retry
+
+# Archivos de configuración específicos del entorno
+.env
+.env.local
+.env.production
+.env.staging
+
+# Archivos de secretos
+secrets/
+*.secret
+*.conf.local
