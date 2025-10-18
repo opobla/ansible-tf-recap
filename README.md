@@ -1,4 +1,21 @@
-- [ ] Hacer login ssh en operaciones
+# Ansible y Terraform: Despliegue automatizado en GCP
+
+En esta práctica vamos a desplegar una infraestructura en Google Cloud Platform (GCP) utilizando Terraform para la creación de recursos y Ansible para su configuración.
+
+El objetivo es crear varias máquinas virtuales en GCP y configurarlas automáticamente para ejecutar diferentes servicios.
+
+## Pasos a seguir
+
+1. Configurar las credenciales de autenticación con GCP
+2. Crear la infraestructura base usando Terraform
+3. Configurar las máquinas virtuales mediante Ansible
+4. Verificar el correcto funcionamiento del despliegue
+
+Antes de comenzar, asegúrate de tener instalados:
+- Google Cloud SDK
+- Terraform
+- Ansible
+
 
 ## Configuración de las credenciales de autenticación
 
@@ -120,7 +137,135 @@ Por seguridad, Terraform pedirá confirmación antes de aplicar los cambios. Se 
 
 ## Obtención del inventario de máquinas para Ansible
 
-Para poder administrar nuestras máquinas con Ansible necesitamos un archivo de inventario que vamos a construir con las máquinas que acabamos de crear con terraform.
+A continuación vamos a configurar Ansible para el aprovisionamiento de las máquinas. Para ello nos situamos en el directorio `ansible` de este repositorio.
+
+Para poder administrar nuestras máquinas con Ansible necesitamos un archivo de inventario que vamos a construir con las máquinas que acabamos de crear con terraform. Para ello usaremos el script `build_inventory`
+
+```bash
+bash build_inventory.sh > inventory.ini
+```
+
+Este script obtiene las direcciones IP de las máquinas creadas por Terraform y genera un archivo de inventario en formato INI para Ansible. El archivo de inventario resultante (`inventory.ini`) contendrá las direcciones IP de nuestras máquinas agrupadas según su rol.
+
+El formato del archivo de inventario será similar a:
+
+```ini
+[web_servers]
+web-1 ansible_host="34.79.15.105"
+web-2 ansible_host="34.78.143.141"
+web-3 ansible_host="34.77.52.107"
+web-4 ansible_host="35.205.78.186"
+web-5 ansible_host="35.190.202.3"
+[web_servers:vars]
+ansible_user=ogarcia
+ansible_ssh_private_key_file=../tf/terraform-key
+```
+
+`ansible_ssh_private_key_file` es una variable de Ansible que especifica la ruta al archivo de clave privada SSH que se utilizará para autenticarse en los hosts remotos. En este caso, apunta a la clave privada generada por Terraform (terraform-key) que se encuentra en el directorio `../tf/`
 
 
+## Probando la conectividad con Ansible
+
+Una vez generado el inventario, podemos verificar que Ansible puede conectarse correctamente a todas las máquinas usando el módulo `ping`:
+
+```bash
+export ANSIBLE_HOST_KEY_CHECKING=False
+ansible -m ping -i inventory.ini web_servers
+```
+
+La variable de entorno `ANSIBLE_HOST_KEY_CHECKING=False` deshabilita la verificación de claves SSH del host. Esto significa que:
+
+- Ansible no verificará ni almacenará las claves SSH de los hosts remotos
+- No preguntará para confirmar la autenticidad de los hosts al conectarse por primera vez
+- Evita el mensaje típico "The authenticity of host ... can't be established"
+
+Esto es útil en entornos de prueba o cuando las máquinas se crean y destruyen frecuentemente, pero **no se recomienda en entornos de producción** ya que reduce la seguridad al omitir la verificación de identidad de los hosts.
+
+Para entornos de producción es mejor gestionar adecuadamente las claves SSH de los hosts y mantener esta verificación activada.
+
+## Ejecutando el primer playbook
+
+Un playbook de Ansible es un archivo YAML que define un conjunto de tareas y configuraciones que se ejecutarán en los hosts remotos. Los playbooks son la forma en que Ansible orquesta el despliegue, la configuración y la administración de sistemas.
+
+Los playbooks pueden:
+
+- Instalar y configurar software
+- Desplegar aplicaciones 
+- Gestionar usuarios y permisos
+- Ejecutar comandos y scripts
+- Manejar servicios del sistema
+- Copiar archivos y templates
+- Y prácticamente cualquier tarea de administración de sistemas
+
+Un playbook simple tiene esta estructura básica:
+```yaml
+# Playbook simple para servidores web
+# Este playbook instala nginx y configura una página web básica
+
+- name: Configurar servidores web
+  hosts: web_servers
+  become: yes
+
+  tasks:
+    - name: Actualizar paquetes del sistema      # Nombre descriptivo de la tarea
+      apt:                                       # Módulo de Ansible para gestionar paquetes apt
+        update_cache: yes                        # Equivalente a ejecutar 'apt-get update'
+
+    - name: Instalar nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Iniciar y habilitar nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Crear página web personalizada
+      copy:
+        content: |
+          <h1>Bienvenido al Servidor {{ inventory_hostname }}</h1>
+          <p>IP: {{ ansible_host }}</p>
+          <p>Servidor gestionado por Ansible</p>
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Mostrar información del servidor
+      debug:
+        msg: "Servidor {{ inventory_hostname }} configurado correctamente"
+```
+
+Este playbook realiza las siguientes tareas:
+
+1. **Definición del playbook**: 
+   - `name`: Define el nombre descriptivo "Configurar servidores web"
+   - `hosts`: Especifica que se ejecutará en los hosts del grupo "web_servers"
+   - `become: yes`: Indica que las tareas se ejecutarán con privilegios de superusuario (sudo)
+
+2. **Actualización del sistema**:
+   - Usa el módulo `apt` para actualizar la caché de paquetes
+   - Equivalente a ejecutar `apt-get update`
+
+3. **Instalación de nginx**:
+   - Utiliza el módulo `apt` para instalar el servidor web nginx
+   - `state: present` asegura que el paquete esté instalado
+
+4. **Configuración del servicio nginx**:
+   - Usa el módulo `service` para:
+     - Iniciar el servicio (`state: started`)
+     - Habilitarlo para que inicie con el sistema (`enabled: yes`)
+
+5. **Creación de página web**:
+   - Utiliza el módulo `copy` para crear un archivo HTML
+   - Usa variables de Ansible como `{{ inventory_hostname }}` y `{{ ansible_host }}`
+   - Establece permisos y propietario apropiados para el archivo
+
+6. **Información de finalización**:
+   - Usa el módulo `debug` para mostrar un mensaje de confirmación
+   - Confirma que el servidor ha sido configurado correctamente
+
+Este playbook es un ejemplo básico pero completo de cómo Ansible puede automatizar la configuración de servidores web.
 
