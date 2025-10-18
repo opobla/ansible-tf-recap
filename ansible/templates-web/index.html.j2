@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ site_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .server-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .info-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .status {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .nav-links {
+            margin: 20px 0;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ASO-GIT {{ site_name }}</h1>
+        
+        <div class="info">
+            <p>¡Bienvenido a nuestro sitio web!</p>
+            <p>Este sitio está gestionado por Ansible y desplegado en Google Cloud Platform.</p>
+        </div>
+        
+        <div class="nav-links">
+            <a href="/">Inicio</a>
+            <a href="/about.html">Acerca de</a>
+            <a href="/contact.html">Contacto</a>
+        </div>
+        
+        <div class="server-info">
+            <div class="info-card">
+                <h3>Servidor</h3>
+                <p><strong>{{ inventory_hostname }}</strong></p>
+            </div>
+            <div class="info-card">
+                <h3>IP Pública</h3>
+                <p><strong>{{ ansible_host }}</strong></p>
+            </div>
+            <div class="info-card">
+                <h3>Estado</h3>
+                <p class="status">● Online</p>
+            </div>
+            <div class="info-card">
+                <h3>Gestionado por</h3>
+                <p><strong>Ansible</strong></p>
+            </div>
+            <div class="info-card">
+                <h3>Zona GCP</h3>
+                <p><strong>{{ ansible_zone | default('N/A') }}</strong></p>
+            </div>
+            <div class="info-card">
+                <h3>Versión Nginx</h3>
+                <p><strong>{{ nginx_version | default('N/A') }}</strong></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Desplegado el {{ ansible_date_time.date }} a las {{ ansible_date_time.time }}</p>
+            <p>Servidor gestionado por Ansible | Google Cloud Platform</p>
+        </div>
+    </div>
+</body>
+</html>

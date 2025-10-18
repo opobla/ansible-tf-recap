@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acerca de - {{ site_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .content {
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .tech-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .tech-card h3 {
+            margin-top: 0;
+            color: #fff;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+        .back-link a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Acerca de {{ site_name }}</h1>
+        
+        <div class="content">
+            <p>Este sitio web es un ejemplo de automatización de infraestructura utilizando las mejores prácticas de DevOps y Cloud Computing.</p>
+            
+            <p>El proyecto demuestra cómo se puede desplegar y gestionar una infraestructura completa de forma automatizada, desde la creación de servidores hasta la configuración de aplicaciones web.</p>
+            
+            <h2>Tecnologías Utilizadas</h2>
+            
+            <div class="tech-stack">
+                <div class="tech-card">
+                    <h3>🌐 Google Cloud Platform</h3>
+                    <p>Infraestructura cloud escalable y confiable para hosting de aplicaciones web.</p>
+                </div>
+                
+                <div class="tech-card">
+                    <h3>🐳 Terraform</h3>
+                    <p>Infrastructure as Code (IaC) para la creación y gestión de recursos cloud.</p>
+                </div>
+                
+                <div class="tech-card">
+                    <h3>⚙️ Ansible</h3>
+                    <p>Automatización de configuración y despliegue de aplicaciones.</p>
+                </div>
+                
+                <div class="tech-card">
+                    <h3>🔧 Nginx</h3>
+                    <p>Servidor web de alto rendimiento con configuración optimizada.</p>
+                </div>
+                
+                <div class="tech-card">
+                    <h3>🐧 Ubuntu Linux</h3>
+                    <p>Sistema operativo robusto y seguro para servidores.</p>
+                </div>
+                
+                <div class="tech-card">
+                    <h3>🔐 SSH & SSL</h3>
+                    <p>Comunicaciones seguras y encriptadas.</p>
+                </div>
+            </div>
+            
+            <h2>Características del Proyecto</h2>
+            <ul>
+                <li><strong>Escalabilidad:</strong> Arquitectura preparada para crecimiento horizontal</li>
+                <li><strong>Alta Disponibilidad:</strong> Distribución en múltiples zonas de GCP</li>
+                <li><strong>Automatización:</strong> Despliegue y configuración completamente automatizados</li>
+                <li><strong>Seguridad:</strong> Configuración de seguridad robusta y actualizada</li>
+                <li><strong>Monitoreo:</strong> Logging y métricas para observabilidad</li>
+                <li><strong>Mantenibilidad:</strong> Código versionado y documentado</li>
+            </ul>
+            
+            <h2>Información del Servidor</h2>
+            <div class="tech-stack">
+                <div class="tech-card">
+                    <h3>Servidor</h3>
+                    <p><strong>{{ inventory_hostname }}</strong></p>
+                </div>
+                <div class="tech-card">
+                    <h3>IP Pública</h3>
+                    <p><strong>{{ ansible_host }}</strong></p>
+                </div>
+                <div class="tech-card">
+                    <h3>Zona GCP</h3>
+                    <p><strong>{{ ansible_zone | default('N/A') }}</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="back-link">
+            <a href="/">← Volver al inicio</a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+

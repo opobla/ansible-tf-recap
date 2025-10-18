@@ -17,3 +17,9 @@ do
     echo "web-$INDEX ansible_host=$IP"
     INDEX=$(($INDEX + 1))
 done
+
+cat << EOF
+[web_servers:vars]
+ansible_user=ogarcia
+ansible_ssh_private_key_file=../tf/terraform-key
+EOF

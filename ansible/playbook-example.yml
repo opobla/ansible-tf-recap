@@ -1,0 +1,38 @@
+---
+# Playbook simple para servidores web
+# Este playbook instala nginx y configura una página web básica
+
+- name: Configurar servidores web
+  hosts: web_servers
+  become: yes
+
+  tasks:
+    - name: Actualizar paquetes del sistema      # Nombre descriptivo de la tarea
+      apt:                                       # Módulo de Ansible para gestionar paquetes apt
+        update_cache: yes                        # Equivalente a ejecutar 'apt-get update'
+
+    - name: Instalar nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Iniciar y habilitar nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Crear página web personalizada
+      copy:
+        content: |
+          <h1>Bienvenido al Servidor {{ inventory_hostname }}</h1>
+          <p>IP: {{ ansible_host }}</p>
+          <p>Servidor gestionado por Ansible</p>
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Mostrar información del servidor
+      debug:
+        msg: "Servidor {{ inventory_hostname }} configurado correctamente"
